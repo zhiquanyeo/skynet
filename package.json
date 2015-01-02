@@ -1,0 +1,14 @@
+{
+  "name": "skynet",
+  "version": "1.0.0",
+  "description": "A controller for wireless FIRST Training bots. Or, a terrifying AI designed to take over the world. One or the other",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zhiquan Yeo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.10.6"
+  }
+}
