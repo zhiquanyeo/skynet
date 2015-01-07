@@ -18,8 +18,13 @@ var MotorType = {
 	SERVO: 2
 };
 
+var Ports = {
+	MQTT_DEFAULT_PORT: 1883
+}
+
 module.exports = {
-	PinDirections: PinDirections,
+	PinTypes: PinTypes,
 	MotorLayout: MotorLayout,
-	MotorType: MotorType
+	MotorType: MotorType,
+	Ports: Ports
 };
