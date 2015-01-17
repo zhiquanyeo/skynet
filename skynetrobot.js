@@ -1,10 +1,14 @@
 //SkynetBot
 var Constants = require('./constants.js');
+var events = require('events');
 
 module.exports = function (five) {
 	return function() {
 		//The main 'class' definition
 		function SkynetRobot(config, opts) {
+
+			events.EventEmitter.call(this);
+
 			//Set up the robot properties
 			this.driveLayout = Constants.MotorLayout.TWO_WHEEL_DRIVE;
 			this.motors = {};
@@ -31,8 +35,6 @@ module.exports = function (five) {
 				configurePins.call(this, config.pins);
 			}
 			//Doesn't matter if we don't have pins
-
-			console.log("this.pinState: ", this.pinState);
 		}
 
 		function configureMotors(motorConfig) {
@@ -86,10 +88,12 @@ module.exports = function (five) {
 			}
 		}
 
-		function configurePins(pinConfig) {
-			Object.keys(pinConfig).forEach(function(pin) {
+		function configurePins(pins) {
+			pins.forEach(function(pinInfo) {
 				//TODO Check that these pins aren't configured for motors
-				var pinType = pinConfig[pin];
+				var pin = pinInfo.pinNumber;
+				var pinType = pinInfo.type;
+
 				switch (pinType) {
 					case Constants.PinTypes.INPUT: {
 						this.board.pinMode(pin, five.Pin.INPUT);
@@ -98,15 +102,17 @@ module.exports = function (five) {
 						//Set up the listener
 						this.board.digitalRead(pin, function(value) {
 							this.pinState.digital[pin] = value;
+							this.emit('stateUpdated');
 						}.bind(this));
 					} break;
 					case Constants.PinTypes.INPUT_PULLUP: {
 						this.board.pinMode(pin, five.Pin.INPUT);
 						this.board.digitalWrite(pin, 1);
-						this.pinState.digital[pin] = 0;
+						this.pinState.digital[pin] = 1; //pull up, default to high
 
 						this.board.digitalRead(pin, function(value) {
 							this.pinState.digital[pin] = value;
+							this.emit('stateUpdated');
 						}.bind(this));
 					} break;
 					case Constants.PinTypes.OUTPUT: {
@@ -125,6 +131,7 @@ module.exports = function (five) {
 
 						this.board.analogRead(pin, function(value) {
 							this.pinState.analog[pin] = value;
+							this.emit('stateUpdated');
 						}.bind(this));
 					}
 				}
@@ -140,6 +147,8 @@ module.exports = function (five) {
 			}
 			return val;
 		}
+
+		SkynetRobot.prototype.__proto__ = events.EventEmitter.prototype;
 
 		//Public Exposed methods
 		SkynetRobot.prototype.setMotorSpeed = function(motor, speed) {

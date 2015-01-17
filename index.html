@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<title>Skynet Status</title>
+		<style>
+			.pinstate {
+				width: 25px;
+				height: 25px;
+				border: 1px solid black;
+				line-height: 25px;
+				margin: 5px;
+				float: left;
+				text-align: center;
+			}
+
+			.pinstate.high {
+				background: green;
+				color: white;
+			}
+
+			.pinstate.low {
+				background: red;
+				color: white;
+			}
+
+			.pinstate.unconfigured {
+				background: gray;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Skynet Status</h1>
+		<h3>Digital</h3>
+		<div id="digital_pin_status_area">
+		</div>
+
+	</body>
+	<script src='/socket.io/socket.io.js'></script>
+	<script>
+		var digitalArea = document.getElementById('digital_pin_status_area');
+		var digitalPinStatus = {};
+
+		for (var i = 0; i < 12; i++) {
+			var elem = document.createElement('div');
+			elem.classList.add('pinstate');
+			elem.classList.add('unconfigured');
+			elem.innerHTML = i;
+			digitalPinStatus[i] = elem;
+
+			digitalArea.appendChild(elem);
+		}
+
+		var socket = io();
+		socket.on('robotState', function(state) {
+			//digital pins
+			if (state.pinState && state.pinState.digital) {
+				for (var pinNum in state.pinState.digital) {
+					var pinNumActual = parseInt(pinNum, 10);
+					var pinElem = digitalPinStatus[pinNumActual];
+					if (state.pinState.digital[pinNum]) {
+						pinElem.classList.remove('unconfigured');
+						pinElem.classList.remove('low');
+						pinElem.classList.add('high');
+					}
+					else {
+						pinElem.classList.remove('unconfigured');
+						pinElem.classList.remove('high');
+						pinElem.classList.add('low');
+					}
+				}
+			}
+		})
+	</script>
+</html>

@@ -22,9 +22,20 @@ var Ports = {
 	MQTT_DEFAULT_PORT: 1883
 }
 
+var ClientTypes = {
+	CONTROL_CLIENT: 'control',
+	LOCAL_CLIENT: 'local'
+}
+
+var ClientIdentifiers = {
+	LOCAL_CLIENT: 'SkynetLocalClient'
+}
+
 module.exports = {
 	PinTypes: PinTypes,
 	MotorLayout: MotorLayout,
 	MotorType: MotorType,
-	Ports: Ports
+	Ports: Ports,
+	ClientTypes: ClientTypes,
+	ClientIdentifiers: ClientIdentifiers
 };

@@ -9,6 +9,10 @@
   "author": "Zhiquan Yeo",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.10.6"
+    "express": "^4.10.6",
+    "javascript-state-machine": "^2.3.2",
+    "johnny-five": "^0.8.36",
+    "mqtt": "^0.3.13",
+    "socket.io": "^1.2.1"
   }
 }
