@@ -5,6 +5,18 @@ var mqtt = require('mqtt');
 var broker = new ControlBroker();
 var lClient = new LocalClient();
 
+lClient.on('analogSignal', function(data) {
+	console.log("[LC] Analog signal received: ", data);
+});
+
+lClient.on('digitalSignal', function(data) {
+	console.log("[LC] Digital signal received: ", data);
+});
+
+lClient.on('pwmSignal', function(data) {
+	console.log("[LC] PWM signal received: ", data);
+});
+
 var tClient = mqtt.createClient();
 var tClient2 = mqtt.createClient();
 tClient.publish('skynet/clients/register', 'control');
@@ -27,5 +39,6 @@ setTimeout(function () {
 
 		console.log("Publishing digitalWrite(3, 1) from testClient 2");
 		tClient2.publish('skynet/control/digital/3', '1');
+		tClient2.end();
 	}, 2000);
 }, 1000);

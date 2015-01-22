@@ -152,7 +152,33 @@ module.exports = function (five) {
 
 		//Public Exposed methods
 		SkynetRobot.prototype.setMotorSpeed = function(motor, speed) {
+			//Just do a simple 2WD one first
+			//We will just feed in the pwmPin and figure it out
+			if (this.driveLayout == Constants.MotorLayout.TWO_WHEEL_DRIVE) {
+				var pwmVal = Math.round(Math.abs(speed) * 255);
+				var dirVal = (speed >= 0) ? 1 : 0;
+				var motorObj = null;
 
+				if (motor === this.motors['left'].pwmPin) {
+					motorObj = this.motors['left'];
+				}
+				else if (motor === this.motors['right'].pwmPin) {
+					motorObj = this.motors['right'];
+				}
+
+				if (motorObj) {
+					this.board.digitalWrite(motorObj.directionPin, dirVal);
+					this.board.analogWrite(motorObj.pwmPin, pwmVal);
+				}
+			}
+		};
+
+		SkynetRobot.prototype.setDigitalOutput = function(pin, value) {
+			this.board.digitalWrite(pin, value);
+		};
+
+		SkynetRobot.prototype.setAnalogOutput = function(pin, value) {
+			this.board.analogWrite(pin, value);
 		};
 
 		return SkynetRobot;

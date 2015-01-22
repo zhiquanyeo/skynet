@@ -7,6 +7,14 @@ function ControlBroker(port) {
 	var currentControlClient = null;
 	var controlClients = [];
 
+	this.getCurrentControlClient = function() {
+		return currentControlClient;
+	};
+
+	this.getAllControlClients = function() {
+		return controlClients.slice(0);
+	}
+
 	if (port === undefined) {
 		port = Constants.Ports.MQTT_DEFAULT_PORT;
 	}
@@ -87,6 +95,10 @@ function ControlBroker(port) {
 				sendToClient(Constants.ClientIdentifiers.LOCAL_CLIENT, packet.topic, packet.payload);
 			}
 			//Otherwise, we just drop the packet
+
+			//If our QoS is > 0, send an acknowledgement
+			if (packet.qos > 0)
+				client.puback({messageId: packet.messageId});
 		});
 
 		client.on('pingreq', function(packet) {

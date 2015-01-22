@@ -22,7 +22,31 @@ function LocalClient() {
 	this.client.on('message', function(topic, message) {
 		var controlMessageResult = controlRegex.exec(topic);
 		if (controlMessageResult !== null) {
-			console.log("[LocalClient] Received a message about %s channel %s: %s", controlMessageResult[1], controlMessageResult[2], message);
+			//console.log("[LocalClient] Received a message about %s channel %s: %s", controlMessageResult[1], controlMessageResult[2], message);
+		
+			switch (controlMessageResult[1]) {
+				case 'analog': {
+					//console.log("[LC] Emitting analogSignal");
+					self.emit('analogSignal', {
+						port: parseInt(controlMessageResult[2], 10),
+						value: parseFloat(message)
+					});
+				} break;
+				case 'digital': {
+					//console.log("[LC] Emitting digitalSignal");
+					self.emit('digitalSignal', {
+						port: parseInt(controlMessageResult[2], 10),
+						value: (message === 'true' || message === '1')
+					});
+				} break;
+				case 'pwm': {
+					//console.log("[LC] Emitting pwmSignal");
+					self.emit('pwmSignal', {
+						port: parseInt(controlMessageResult[2], 10),
+						value: parseFloat(message)
+					});
+				} break;
+			}
 		}
 	});
 }
