@@ -56,6 +56,19 @@ board.on('ready', function() {
 		board: this
 	});
 
+	theRobot.on('digitalReading', function(data) {
+		localClient.updateDigital(data.pin, data.value);
+	});
+
+	theRobot.on('analogReading', function(data) {
+		localClient.updateAnalog(data.pin, data.value);
+	});
+
+	localClient.on('shutdown', function() {
+		console.log("!!! E-STOP !!!");
+		theRobot.estop();
+	});
+
 	localClient.on('pwmSignal', function(data) {
 		if (data.port === RobotConfigs.demoRobotConfig.motors.left.pwmPin ||
 			data.port === RobotConfigs.demoRobotConfig.motors.right.pwmPin) {
@@ -68,5 +81,4 @@ board.on('ready', function() {
 			pinState: theRobot.pinState
 		});
 	}, 500);
-	console.log(theRobot.pinState);
 });

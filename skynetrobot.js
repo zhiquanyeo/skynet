@@ -103,6 +103,11 @@ module.exports = function (five) {
 						this.board.digitalRead(pin, function(value) {
 							this.pinState.digital[pin] = value;
 							this.emit('stateUpdated');
+							this.emit('digitalReading', {
+								pin: pin,
+								value: value
+							});
+
 						}.bind(this));
 					} break;
 					case Constants.PinTypes.INPUT_PULLUP: {
@@ -113,6 +118,11 @@ module.exports = function (five) {
 						this.board.digitalRead(pin, function(value) {
 							this.pinState.digital[pin] = value;
 							this.emit('stateUpdated');
+							this.emit('digitalReading', {
+								pin: pin,
+								value: value
+							});
+
 						}.bind(this));
 					} break;
 					case Constants.PinTypes.OUTPUT: {
@@ -132,6 +142,11 @@ module.exports = function (five) {
 						this.board.analogRead(pin, function(value) {
 							this.pinState.analog[pin] = value;
 							this.emit('stateUpdated');
+							this.emit('analogReading', {
+								pin: pin,
+								value: value
+							});
+
 						}.bind(this));
 					}
 				}
@@ -179,6 +194,13 @@ module.exports = function (five) {
 
 		SkynetRobot.prototype.setAnalogOutput = function(pin, value) {
 			this.board.analogWrite(pin, value);
+		};
+
+		SkynetRobot.prototype.estop = function() {
+			if (this.driveLayout == Constants.MotorLayout.TWO_WHEEL_DRIVE) {
+				this.setMotorSpeed(this.motors['left'].pwmPin, 0);
+				this.setMotorSpeed(this.motors['right'].pwmPin, 0);
+			}
 		};
 
 		return SkynetRobot;

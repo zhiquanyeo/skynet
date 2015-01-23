@@ -111,6 +111,11 @@ function ControlBroker(port) {
 
 		client.on('close', function(packet) {
 			delete self.clients[client.id];
+			console.log("[ControlBroker] Client %s disconnected", client.id);
+
+			if (client.id === currentControlClient) {
+				sendToClient(Constants.ClientIdentifiers.LOCAL_CLIENT, "skynet/clients/shutdown", "true");
+			}
 
 			var idx = -1;
 			for (var i = 0; i < controlClients.length; i++) {
