@@ -96,34 +96,63 @@ module.exports = function (five) {
 
 				switch (pinType) {
 					case Constants.PinTypes.INPUT: {
-						this.board.pinMode(pin, five.Pin.INPUT);
-						this.pinState.digital[pin] = 0;
+						this.pinState.digital[pin] = {
+							lastUpdateTime: 0,
+							value: 0
+						};
 
-						//Set up the listener
-						this.board.digitalRead(pin, function(value) {
-							this.pinState.digital[pin] = value;
-							this.emit('stateUpdated');
+						var button = new five.Button({
+							pin: pin, 
+						});
+
+						button.on('hit', function() {
+							this.pinState.digital[pin].value = 1;
+							this.emit('stateUpdate');
 							this.emit('digitalReading', {
-								pin: pin,
-								value: value
+								pin: pin, 
+								value: 0
 							});
-
 						}.bind(this));
+
+						button.on('release', function() {
+							this.pinState.digital[pin].value = 0;
+							this.emit('stateUpdate');
+							this.emit('digitalReading', {
+								pin: pin, 
+								value: 1
+							});
+						}.bind(this));
+
 					} break;
 					case Constants.PinTypes.INPUT_PULLUP: {
-						this.board.pinMode(pin, five.Pin.INPUT);
-						this.board.digitalWrite(pin, 1);
-						this.pinState.digital[pin] = 1; //pull up, default to high
+						this.pinState.digital[pin] = {
+							lastUpdateTime: 0,
+							value: 1, //Store this as high by default since we're a pull up
+						};
 
-						this.board.digitalRead(pin, function(value) {
-							this.pinState.digital[pin] = value;
-							this.emit('stateUpdated');
+						var button = new five.Button({
+							pin: pin, 
+							isPullup: true
+						});
+
+						button.on('hit', function() {
+							this.pinState.digital[pin].value = 0;
+							this.emit('stateUpdate');
 							this.emit('digitalReading', {
-								pin: pin,
-								value: value
+								pin: pin, 
+								value: 0
 							});
-
 						}.bind(this));
+
+						button.on('release', function() {
+							this.pinState.digital[pin].value = 1;
+							this.emit('stateUpdate');
+							this.emit('digitalReading', {
+								pin: pin, 
+								value: 1
+							});
+						}.bind(this));
+
 					} break;
 					case Constants.PinTypes.OUTPUT: {
 						this.board.pinMode(pin, five.Pin.OUTPUT);
@@ -137,15 +166,23 @@ module.exports = function (five) {
 					} break;
 					case Constants.PinTypes.ANALOG: {
 						this.board.pinMode(pin, five.Pin.ANALOG);
-						this.pinState.analog[pin] = 0; //0-1023
-
+						this.pinState.analog[pin] = {
+							lastUpdateTime: 0,
+							value: 0, //0-1023
+						}
+						
 						this.board.analogRead(pin, function(value) {
-							this.pinState.analog[pin] = value;
-							this.emit('stateUpdated');
-							this.emit('analogReading', {
-								pin: pin,
-								value: value
-							});
+							var currentTime = (new Date()).getTime();
+							if (currentTime - this.pinState.analog[pin].lastUpdateTime > Constants.TimeDelays.ANALOG_SENSOR_UPDATE_DELAY) {
+								this.pinState.analog[pin].lastUpdateTime = currentTime;
+								this.pinState.analog[pin].value = value;
+								this.emit('stateUpdated');
+								this.emit('analogReading', {
+									pin: pin,
+									value: value
+								});
+							}
+							
 
 						}.bind(this));
 					}

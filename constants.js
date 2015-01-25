@@ -31,11 +31,17 @@ var ClientIdentifiers = {
 	LOCAL_CLIENT: 'SkynetLocalClient'
 }
 
+var TimeDelays = {
+	DIGITAL_SENSOR_UPDATE_DELAY: 50, //ms
+	ANALOG_SENSOR_UPDATE_DELAY: 10
+}
+
 module.exports = {
 	PinTypes: PinTypes,
 	MotorLayout: MotorLayout,
 	MotorType: MotorType,
 	Ports: Ports,
 	ClientTypes: ClientTypes,
-	ClientIdentifiers: ClientIdentifiers
+	ClientIdentifiers: ClientIdentifiers,
+	TimeDelays: TimeDelays
 };

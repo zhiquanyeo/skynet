@@ -57,10 +57,12 @@ board.on('ready', function() {
 	});
 
 	theRobot.on('digitalReading', function(data) {
+		console.log("[SKYNET] Digital Reading on port %d: ", data.pin, data.value);
 		localClient.updateDigital(data.pin, data.value);
 	});
 
 	theRobot.on('analogReading', function(data) {
+		//console.log("[SKYNET] Analog Reading on port %d: ", data.pin, data.value);
 		localClient.updateAnalog(data.pin, data.value);
 	});
 

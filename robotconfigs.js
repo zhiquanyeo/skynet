@@ -19,11 +19,11 @@ var demoRobotConfig = {
 			type: Constants.PinTypes.ANALOG
 		},
 		{
-			pinNumber: 2,
+			pinNumber: 9,
 			type: Constants.PinTypes.INPUT_PULLUP
 		},
 		{
-			pinNumber: 3,
+			pinNumber: 10,
 			type: Constants.PinTypes.INPUT_PULLUP
 		}
 	]
