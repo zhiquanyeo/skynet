@@ -25,7 +25,7 @@ function LocalClient() {
 			this.emit('shutdown');
 			return;
 		}
-		
+
 		var controlMessageResult = controlRegex.exec(topic);
 		if (controlMessageResult !== null) {
 			//console.log("[LocalClient] Received a message about %s channel %s: %s", controlMessageResult[1], controlMessageResult[2], message);
@@ -60,11 +60,12 @@ function LocalClient() {
 util.inherits(LocalClient, events.EventEmitter);
 
 LocalClient.prototype.updateDigital = function(pin, value) {
-	this.client.publish('skynet/sensors/digital/' + pin, value ? "1" : "0");
+	console.log("[LocalClient] publishing to %d value of %s", pin, value ? "1" : "0");
+	this.client.publish('skynet/robot/sensors/digital/' + pin, value ? "1" : "0");
 };
 
 LocalClient.prototype.updateAnalog = function(pin, value) {
-	this.client.publish('skynet/sensors/analog/' + pin, value.toString());
+	this.client.publish('skynet/robot/sensors/analog/' + pin, value.toString());
 };
 
 module.exports = LocalClient;

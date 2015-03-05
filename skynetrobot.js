@@ -136,6 +136,7 @@ module.exports = function (five) {
 						});
 
 						button.on('hit', function() {
+							console.log("[SkynetRobot] Pin %d was pressed.", pin);
 							this.pinState.digital[pin].value = 0;
 							this.emit('stateUpdate');
 							this.emit('digitalReading', {
@@ -145,6 +146,7 @@ module.exports = function (five) {
 						}.bind(this));
 
 						button.on('release', function() {
+							console.log("[SkynetRobot] Pin %d was released.", pin);
 							this.pinState.digital[pin].value = 1;
 							this.emit('stateUpdate');
 							this.emit('digitalReading', {
